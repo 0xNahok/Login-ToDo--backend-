@@ -13,20 +13,63 @@ module.exports = {
 }
 
 function register(req, res){
+
+  var pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  var ValidEmail = req.body.email.match( pattern );
+
+
       console.log(req.body);
-   
-     if(!req.body.username || !req.body.email || !req.body.password) {
-      res.json({
-        "message" : "All fields required"
+      
+  if(req.body.email == '')
+  {
+    res.status(400);
+    res.json({
+      "type": "error",
+      "message" : "Email required!"
+    });
+  return;
+  }
+
+  if(!ValidEmail)
+  {
+    res.status(400);
+    res.json({
+      "type": "error",
+      "message" : "Please enter a valid email address!"
+    });
+  return;
+  }
+
+
+  if(req.body.password == '')
+  {
+    res.status(400);
+    res.json({
+      "type": "error",
+      "message" : "Password required!"
+    });
+  return;
+  }
+
+  if ((req.body.password.length)  < 5 || (req.body.password.length) > 15 ) {
+       res.status(400);
+       res.json({
+        "type": "error",
+        "message" : "Password must be between 5 and 15 characters long"
       });
-      res.status(400);
-      /*
-       sendJSONresponse(res, 400, {
-         "message": "All fields required"
-       });*/
-       return;
-        
-     }
+    return;
+    
+  }
+   if(req.body.username == '')
+  {
+    res.status(400);
+    res.json({
+      "type": "error",
+      "message" : "Username required!"
+    });
+  return;
+  }
  
     var user = new User();
   
@@ -80,7 +123,7 @@ function login(req , res, next){
   }
 
 
-  if(req.body.password== '')
+  if(req.body.password == '')
   {
     res.status(400);
     res.json({
