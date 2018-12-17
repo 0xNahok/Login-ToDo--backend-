@@ -2,6 +2,10 @@
 let User = require("../models/user");
 let Todo = require("../models/todo");
 
+const nodemailer = require('nodemailer');
+
+ejs = require('ejs');
+
 module.exports = {
     all,
     one,
@@ -68,6 +72,8 @@ function todolist(req, res){
 
     })
     };
+
+  
 
 function profile(req, res) {
   console.log(req.payload)

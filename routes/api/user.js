@@ -10,10 +10,12 @@ var auth = jwt({
   });
 
 router.get('/:email', UserCtrl.one);
+
+
 router.get('/profilee',auth, UserCtrl.profile);
 router.get('/todo', auth, UserCtrl.todolist);
 router.get('/', UserCtrl.all);
-//router.post('/',UserCtrl.create);
+
 
 
 module.exports = router;

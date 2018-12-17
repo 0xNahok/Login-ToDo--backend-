@@ -6,7 +6,23 @@ module.exports = {
     create,
     recordsby,
     updateTodo,
-    all
+    all,
+    deleteTodo
+}
+
+function deleteTodo(req, res)
+{   
+    console.log(req.params);
+    Todo.remove({ _id: req.params.id })
+        .then(todo => {
+            res.status(200).json({
+                'type': 'success',
+                'message': 'Delete it!'
+            });
+        })
+        .catch(err => {
+            res.status(400).send('Error');
+        });
 }
 
 function create(req, res){
@@ -53,6 +69,9 @@ function recordsby(req, res){
 
     })
 };
+
+
+
 function all(req, res){
     console.log(req.params);
     
