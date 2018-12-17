@@ -9,6 +9,7 @@ module.exports = (()=>
 {
 let userSchema = new mongoose.Schema({	
     username: String,
+    name: String,
     email: {type:String, unique: true, required:true},
     hash: String,
     salt: String
@@ -33,6 +34,7 @@ userSchema.methods.setPassword = function(password){
       _id: this._id,
       email: this.email,
       username: this.username,
+      name : this.name,
       exp: parseInt(expiry.getTime() / 1000),
     }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE!
   };

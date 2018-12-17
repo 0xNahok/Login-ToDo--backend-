@@ -5,7 +5,7 @@ module.exports = (()=>
 {
 let todoSchema = new mongoose.Schema({	
 	title: String,
-	completed: {type: Boolean, default: false},
+	status: {type: Number, default: 0}, // 0 is new, 1 in progress, 2 Done
 	userID: String
 });
 return mongoose.model('todo', todoSchema);

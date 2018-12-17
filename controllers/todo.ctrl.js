@@ -5,11 +5,20 @@ let Todo = require("../models/todo");
 module.exports = {
     create,
     recordsby,
-    deleteTodo,
+    updateTodo,
     all
 }
 
 function create(req, res){
+    if(req.body.title == '' )
+    {
+        res.status(400).json(
+            {   'type' : 'warning',
+                'message': 'Title required!'
+            }
+        );
+        return
+    }
      let NewTodo = new Todo(req.body);
      console.log();
 
@@ -19,7 +28,11 @@ function create(req, res){
      }
     NewTodo.save()
         .then(issue => {
-            res.status(200).json({'issue': 'Added successfully'});
+            res.status(200).json(
+                {   'type' : 'success',
+                    'message': 'Added successfully'
+                }
+            );
         })
         .catch(err => {
             res.status(400).send('Failed to create new record');
@@ -55,33 +68,19 @@ function all(req, res){
     })
 };
 
-    function deleteTodo(req, res){
-        //console.log(req.params.id);
-        /*
-        Todo.remove({ _id: req.params.id })
+    function updateTodo(req, res){
+        console.log( req.params.id);
+        console.log(req.params);
+   
+        Todo.findByIdAndUpdate(req.params.id, { $set: { status: req.params.status }})
         .then(todo => {
-            res.status(200).json({'issue': 'Added successfully'});
+            res.status(200).json( {
+                'type' : 'success', 
+                'message': 'Task deleted!'
+            } );
         })
         .catch(err => {
             res.status(400).send('Failed to create new record');
         });
-*/
-        Todo.findByIdAndRemove({_id: req.params.id}, (err, todo) => {
-            if (err)
-                res.sendStatus(500);
-            else
-            res.sendStatus(200);
-        });
          
-                /* Todo.remove({ _id: req.params.id }, function(err)
-                    {  
-                        if(err){
-                        console.log(err);
-                        res.sendStatus(500);
-                        return
-                    }
-                return res.sendStatus(200);
-
-                });
-            */
         }   

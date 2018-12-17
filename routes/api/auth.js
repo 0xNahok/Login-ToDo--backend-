@@ -8,5 +8,6 @@ let AuthCtrl = require('../../controllers/authentication');
 
 router.post('/register', AuthCtrl.register);
 router.post('/login', AuthCtrl.login);
+router.post('/update', AuthCtrl.update);
 
 module.exports = router;
