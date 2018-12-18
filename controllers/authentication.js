@@ -14,7 +14,7 @@ module.exports = {
     register,
     login,
     update,
-    UserbyID
+    ForgotP
 }
 
 
@@ -106,12 +106,29 @@ function register(req, res){
     user.setPassword(req.body.password);
     console.log(user);
     user.save(function(err) {
-        if(err)
-    {
-    console.log(err);
-    res.sendStatus(500);
-    return
-    }
+      if(err){
+          if(err.code == 11000 )
+          { 
+            res.status(400);
+            res.json({
+              "type": 'error',
+              "message" : "Email used!"
+            });
+            
+          console.log(err);
+        
+          return
+          }else{
+            res.status(400);s
+            res.json({
+              "type": 'error',
+              "message" : "Database down!"
+            });
+          }
+
+      }
+        
+    
       var token;
       token = user.generateJwt();
       res.json({
@@ -204,8 +221,8 @@ function update(req, res){
           'type' : 'success', 
           'message': 'Updated profile (No password changed)!'
       } );
-  })
-  .catch(err => {
+    })
+    .catch(err => {
     
       res.status(400).send('Failed to create new record');
   });
@@ -228,11 +245,11 @@ function update(req, res){
        'message': 'Updated (Password changed)!'
    } );
 })
-.catch(err => {
- 
-   res.status(400).send('Failed to create new record');
-});
-  }
+      .catch(err => {
+    
+      res.status(400).send('Failed to create new record');
+    });
+  } 
 
 };
 
@@ -309,75 +326,88 @@ function login(req , res, next){
 
 }
 
-function UserbyID(req, res){
+function ForgotP(req, res){
+
+  if(req.body.email == '')
+  {
+    res.status(400);
+    res.json({
+      "type": "error",
+      "message" : "Email required!"
+    });
+  return;
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 587,
+    auth: {
+        user: 'no-reply@johanmarin.tech',
+        pass: 'hola12321'
+    }
+  });
+
   var user = new User();
   var randomstring = Math.random().toString(36).slice(-8);
-
-  let id = req.params.id;
-
+  console.log(req.body);
   console.log(randomstring);
-  User.findById(id, function (err, user) 
-  { 
-            user.setPassword(randomstring);
-            console.log(user);
-            User.findByIdAndUpdate(id, { $set:
-            { 
-              salt : user.salt,
-              hash : user.hash 
-          }
-            })
-          .then(user => {
-            res.status(200).json( {
-                'type' : 'success', 
-                'message': 'Updated (Password changed)!'
-            } );
-        })
-        .catch(err => {
-          
-            res.status(400).send('Failed to create new record');
-        });
-
-
-          if(err){
-              console.log(err);
-              res.sendStatus(500);
-              return
-          }
-          console.log(user);
-      let transporter = nodemailer.createTransport({
-        host: 'smtp.hostinger.com',
-        port: 587,
-        auth: {
-            user: 'no-reply@johanmarin.tech',
-            pass: 'hola12321'
-        }
+  
+  User.findOne({
+    email: req.body.email
+  },function (err, user) {
+    if (user == null)
+    {
+      res.status(400);
+      res.json({
+        "type": "error",
+        "message" : "Email incorrect!"
       });
-      ejs.renderFile(__dirname + "/templates/resetPassword/html.ejs", 
-      { name: user.name, username: user.username,
-        email: user.email, password: randomstring
-      }, function (err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            var mainOptions = {
-                from: '"No-reply" no-reply@johanmarin.tech',
-                to: user.email,
-                subject: 'Information recovery',
-                html: data
-            };
-            //console.log("html data ======================>", mainOptions.html);
-            transporter.sendMail(mainOptions, function (err, info) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('Message sent: ' + info.response);
-                }
-            });
-        }
+      return;
+    } 
+
+    // Prints "Space Ghost is a talk show host".
+   
+    console.log(user);
+  }).then((user) => {
+     user.setPassword(randomstring);
+    user.save().then(() => {
         
-        });
+
+            ejs.renderFile(__dirname + "/templates/resetPassword/html.ejs", 
+          { name: user.name, username: user.username,
+            email: user.email, password: randomstring
+          }, function (err, data) {
+              if (err) {
+                  console.log(err);
+              } else {
+                  var mainOptions = {
+                      from: '"No-reply" no-reply@johanmarin.tech',
+                      to: user.email,
+                      subject: 'Information recovery',
+                      html: data
+                  };
+                  //console.log("html data ======================>", mainOptions.html);
+                  transporter.sendMail(mainOptions, function (err, info) {
+                      if (err) {
+                          console.log(err);
+                      } else 
+                      {
+                          console.log('Message sent: ' + info.response);
+                          res.status(400);
+                          res.json({
+                            "type": "success",
+                            "message" : "Password reset, check your email!"
+                          });
+                          return;
+                      }
+                  });
+            }
+            
+            });
+            console.log(user) 
+          });
+  });
 
 
-   } ); //findby
 };//UserBy
 
