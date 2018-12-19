@@ -95,7 +95,7 @@ function all(req, res){
         .then(todo => {
             res.status(200).json( {
                 'type' : 'success', 
-                'message': 'Task deleted!'
+                'message': 'Task updated!'
             } );
         })
         .catch(err => {
