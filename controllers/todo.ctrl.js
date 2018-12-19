@@ -43,12 +43,16 @@ function create(req, res){
 
      }
     NewTodo.save()
-        .then(issue => {
+        .then(ntodo => {
+            console.log(ntodo);
+            res.send(ntodo);
+            /*
             res.status(200).json(
                 {   'type' : 'success',
                     'message': 'Added successfully'
                 }
             );
+            */
         })
         .catch(err => {
             res.status(400).send('Failed to create new record');
