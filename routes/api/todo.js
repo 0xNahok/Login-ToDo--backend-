@@ -10,5 +10,6 @@ router.get('/', TodoCtrl.all);
 router.get('/update/:id&:status', TodoCtrl.updateTodo);
 router.post('/create', TodoCtrl.create);
 router.get('/delete/:id', TodoCtrl.deleteTodo);
+router.post('/modify', TodoCtrl.modify);
 
 module.exports = router;

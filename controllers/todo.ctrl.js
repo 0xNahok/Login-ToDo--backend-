@@ -7,7 +7,8 @@ module.exports = {
     recordsby,
     updateTodo,
     all,
-    deleteTodo
+    deleteTodo,
+    modify
 }
 
 function deleteTodo(req, res)
@@ -106,4 +107,29 @@ function all(req, res){
             res.status(400).send('Failed to create new record');
         });
          
-        }   
+        };   
+
+function modify(req, res){
+            let idtodo = req.body.todoID;
+            let newtittle = req.body.titledit;
+           
+                    Todo.findByIdAndUpdate(idtodo, { $set: { title: newtittle }})
+                    .then(todo => {
+                        console.log(todo);
+                        //res.send(todo);
+                        res.status(200).json( {
+                            'response': { 
+                                'todo': todo,
+                                'msg': {
+                                    'type' : 'success', 
+                                    'message': 'Task updated!'
+                                        }
+                                    }
+                        } );
+                    })
+                    .catch(err => {
+                        res.status(400).send('Failed to create new record');
+                    });
+           
+            }   
+    
