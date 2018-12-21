@@ -1,8 +1,9 @@
 'use strict';
 
 let router = require('express').Router();
-let UserCtrl = require('../../controllers/user.ctrl');
+
 let AuthCtrl = require('../../controllers/authentication');
+const { check, validationResult } = require('express-validator/check');
 
 
 

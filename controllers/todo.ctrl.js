@@ -1,6 +1,7 @@
 
-let User = require("../models/user");
+
 let Todo = require("../models/todo");
+const { check, validationResult } = require('express-validator/check');
 
 module.exports = {
     create,
@@ -27,6 +28,18 @@ function deleteTodo(req, res)
 }
 
 function create(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log();
+      
+        return res.status(422).json(
+            {   'type' : 'warning',
+                'message': errors.array()[0].msg
+            }
+        );
+      }
+    console.log(errors);
+    console.log(req.body);
     if(req.body.title == '' )
     {
         res.status(400).json(
@@ -37,12 +50,7 @@ function create(req, res){
         return
     }
      let NewTodo = new Todo(req.body);
-     console.log();
 
-     if(req.body.title)
-     {
-
-     }
     NewTodo.save()
         .then(ntodo => {
             console.log(ntodo);
@@ -61,12 +69,12 @@ function create(req, res){
     };
 
 function recordsby(req, res){
-    console.log(req.params);
+
     
         Todo.find({"userID" : req.params.userID}, function(err, found_todo)
         {  
             if(err){
-            console.log(err);
+      
             res.sendStatus(500);
             return
         }
@@ -78,12 +86,12 @@ function recordsby(req, res){
 
 
 function all(req, res){
-    console.log(req.params);
+
     
         Todo.find({}, function(err, found_todo)
         {  
             if(err){
-            console.log(err);
+      
             res.sendStatus(500);
             return
         }
@@ -93,11 +101,11 @@ function all(req, res){
 };
 
     function updateTodo(req, res){
-        console.log( req.params.id);
-        console.log(req.params);
+
    
         Todo.findByIdAndUpdate(req.params.id, { $set: { status: req.params.status }})
         .then(todo => {
+            console.log(todo);
             res.status(200).json( {
                 'type' : 'success', 
                 'message': 'Task updated!'
@@ -110,10 +118,11 @@ function all(req, res){
         };   
 
 function modify(req, res){
+        
             let idtodo = req.body.todoID;
             let newtittle = req.body.titledit;
-           
-                    Todo.findByIdAndUpdate(idtodo, { $set: { title: newtittle }})
+           console.log(newtittle);
+                    Todo.findByIdAndUpdate(idtodo, { $set: { title: newtittle }}, { new : true})
                     .then(todo => {
                         console.log(todo);
                         //res.send(todo);

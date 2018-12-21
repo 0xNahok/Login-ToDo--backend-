@@ -25,7 +25,7 @@ function register(req, res){
 
   var ValidEmail = req.body.email.match( Emailpattern );
 
-  var Alphanumpattern = /^[a-z0-9]+$/i;
+
   
       console.log(req.body);
       
@@ -105,7 +105,7 @@ function register(req, res){
     user.email = req.body.email;
     user.name = req.body.name
     user.setPassword(req.body.password);
-    console.log(user);
+
     user.save(function(err) {
       if(err){
           if(err.code == 11000 )
