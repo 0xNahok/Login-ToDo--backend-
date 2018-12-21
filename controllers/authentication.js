@@ -2,7 +2,7 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var User = require("../models/user");
 const nodemailer = require('nodemailer');
-
+const { check, validationResult } = require('express-validator/check');
 ejs = require('ejs');
 
 var sendJSONresponse = function(res, status, content) {
@@ -20,6 +20,17 @@ module.exports = {
 
 
 function register(req, res){
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      console.log(errors.array());
+    
+      return res.status(422).json(
+          {   'type' : 'warning',
+              'message': errors.array()[0].msg
+          }
+      );
+    }
 
   var Emailpattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -256,6 +267,18 @@ function update(req, res){
 
 
 function login(req , res, next){
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      console.log(errors.array());
+    
+      return res.status(422).json(
+          {   'type' : 'warning',
+              'message': errors.array()[0].msg
+          }
+      );
+    }
+    
   var pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
   var ValidEmail = req.body.email.match( pattern );
